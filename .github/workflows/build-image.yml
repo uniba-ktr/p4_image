@@ -27,7 +27,6 @@ jobs:
          context: .
          file: p4.dockerfile
          outputs: type=docker,dest=/tmp/p4.tar
-         target: p4c
          tags: ${{ env.REGISTRY }}/p4:${{ env.BRANCH_NAME }}
      - name: Upload artifact
        uses: actions/upload-artifact@v3

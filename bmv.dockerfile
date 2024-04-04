@@ -1,5 +1,5 @@
 ARG image=unibaktr/ubuntu
-FROM $image AS p4c
+FROM $image
 WORKDIR /
 
 RUN git clone https://github.com/p4lang/behavioral-model && \
