@@ -59,7 +59,8 @@ jobs:
        with:
          context: .
          file: grpc.dockerfile
-         outputs: type=docker,dest=/tmp/grpc.tar
+         push: false
+         load: true
          tags: ${{ env.REGISTRY }}/grpc:${{ env.BRANCH_NAME }}
          build-args: |
            image=${{ env.REGISTRY }}/p4:${{ env.BRANCH_NAME }}
