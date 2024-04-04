@@ -67,7 +67,7 @@ jobs:
      - name: tar image
        run: |
              docker image ls -a
-             docker save --output /tmp/grpc.tar ${{ env.REGISTRY }}/p4:${{ env.BRANCH_NAME }}             
+             docker save --output /tmp/grpc.tar ${{ env.REGISTRY }}/grpc:${{ env.BRANCH_NAME }}             
      - name: Upload artifact
        uses: actions/upload-artifact@v3
        with:
