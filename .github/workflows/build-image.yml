@@ -35,39 +35,71 @@ jobs:
          name: p4
          path: /tmp/p4.tar
 
-  # simple_singlestage_images_alpine:
-  #   needs: simple_base_images
-  #   strategy:
-  #     matrix:
-  #       singlestage_images: [ab, apache, coredns, frr, ipv6, quagga, traefik, wireguard, sflowrt]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #    - name: Checkout
-  #      uses: actions/checkout@v3.4.0
-  #    # https://github.com/docker/setup-buildx-action
-  #    - name: Download artifact
-  #      uses: actions/download-artifact@v3
-  #      with:
-  #        name: alpine
-  #        path: /tmp
-  #    - name: Load image
-  #      run: |
-  #        docker load --input /tmp/alpine.tar
-  #        docker image ls -a
-  #    - name: Set up Docker Buildx
-  #      uses: docker/setup-buildx-action@v2
-  #      with:
-  #         driver: docker
-  #    - name: Build and export
-  #      uses: docker/build-push-action@v4
-  #      with:
-  #        context: ./singlestage_images/
-  #        file: ./singlestage_images/${{ matrix.singlestage_images }}.dockerfile
-  #        push: false
-  #        load: true
-  #        tags: ${{ env.REGISTRY }}/${{ matrix.singlestage_images }}:${{ env.BRANCH_NAME }}
-  #        build-args: |
-  #          image=${{ env.REGISTRY }}/alpine:${{ env.BRANCH_NAME }}
-  #
-  #    - name: List images
-  #      run: docker image ls -a
+  grpc_image:
+    needs: p4c_image
+    runs-on: ubuntu-latest
+    steps:
+     - name: Checkout
+       uses: actions/checkout@v3.4.0
+     # https://github.com/docker/setup-buildx-action
+     - name: Download artifact
+       uses: actions/download-artifact@v3
+       with:
+         name: p4
+         path: /tmp
+     - name: Load image
+       run: |
+         docker load --input /tmp/p4.tar
+         docker image ls -a
+     - name: Set up Docker Buildx
+       uses: docker/setup-buildx-action@v2
+       with:
+          driver: docker
+     - name: Build and export
+       uses: docker/build-push-action@v4
+       with:
+         context: .
+         file: grpc.dockerfile
+         outputs: type=docker,dest=/tmp/grpc.tar
+         tags: ${{ env.REGISTRY }}/grpc:${{ env.BRANCH_NAME }}
+         build-args: |
+           image=${{ env.REGISTRY }}/p4:${{ env.BRANCH_NAME }}
+     - name: Upload artifact
+       uses: actions/upload-artifact@v3
+       with:
+         name: p4
+         path: /tmp/grpc.tar
+
+bmv_image:
+    needs: grpc_image
+    runs-on: ubuntu-latest
+    steps:
+     - name: Checkout
+       uses: actions/checkout@v3.4.0
+     # https://github.com/docker/setup-buildx-action
+     - name: Download artifact
+       uses: actions/download-artifact@v3
+       with:
+         name: p4
+         path: /tmp
+     - name: Load image
+       run: |
+         docker load --input /tmp/grpc.tar
+         docker image ls -a
+     - name: Set up Docker Buildx
+       uses: docker/setup-buildx-action@v2
+       with:
+          driver: docker
+     - name: Build and export
+       uses: docker/build-push-action@v4
+       with:
+         context: .
+         file: bmv.dockerfile
+         push: false
+         load: true
+         tags: ${{ env.REGISTRY }}/bmv:${{ env.BRANCH_NAME }}
+         build-args: |
+           image=${{ env.REGISTRY }}/grpc:${{ env.BRANCH_NAME }}
+
+     - name: List images
+       run: docker image ls -a
