@@ -14,7 +14,7 @@ on:
       - 'main'
 
 jobs:
-  simple_base_images:
+  p4c_image:
     runs-on: ubuntu-latest
     steps:
      - name: Checkout
