@@ -1,35 +1,35 @@
 ARG image=unibaktr/ubuntu
 FROM $image
 
-RUN apt update && \
-    apt install -y \
-	automake \
-  bison \
-	cmake \
-	g++ \
-  flex \
-  git \
-	libgc-dev \
-	libgmp-dev \
-	libpcap-dev \
-	libboost-dev \
-	libboost-test-dev \
-	libboost-program-options-dev \
-	libboost-system-dev \
-	libboost-filesystem-dev \
-	libboost-thread-dev \
-	libboost-iostreams-dev \
-	libboost-graph-dev \
-	libevent-dev \
-	libjudy-dev \
-	libprotobuf-dev \
-	libssl-dev \
-	libtool \
-	llvm \
-	protobuf-compiler \
-  wget && \
-  apt clean && \
-  rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/
+# RUN apt update && \
+#     apt install -y \
+# 	automake \
+#   bison \
+# 	cmake \
+# 	g++ \
+#   flex \
+#   git \
+# 	libgc-dev \
+# 	libgmp-dev \
+# 	libpcap-dev \
+# 	libboost-dev \
+# 	libboost-test-dev \
+# 	libboost-program-options-dev \
+# 	libboost-system-dev \
+# 	libboost-filesystem-dev \
+# 	libboost-thread-dev \
+# 	libboost-iostreams-dev \
+# 	libboost-graph-dev \
+# 	libevent-dev \
+# 	libjudy-dev \
+# 	libprotobuf-dev \
+# 	libssl-dev \
+# 	libtool \
+# 	llvm \
+# 	protobuf-compiler \
+#   wget && \
+#   apt clean && \
+#   rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/
 
 WORKDIR /tmp
 
