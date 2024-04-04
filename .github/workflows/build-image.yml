@@ -70,7 +70,7 @@ jobs:
          name: p4
          path: /tmp/grpc.tar
 
-bmv_image:
+  bmv_image:
     needs: grpc_image
     runs-on: ubuntu-latest
     steps:
