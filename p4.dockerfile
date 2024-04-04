@@ -33,9 +33,9 @@ RUN apt update && \
 
 WORKDIR /tmp
 
-RUN git clone --recursive https://github.com/p4lang/p4c.git && \
-    cd p4c && mkdir build && cd build && \
-	cmake .. && \
-	make -j$(nproc) && \
-	make install && ldconfig && \
-	cd .. && rm -Rf p4c/
+# RUN git clone --recursive https://github.com/p4lang/p4c.git && \
+#     cd p4c && mkdir build && cd build && \
+# 	cmake .. && \
+# 	make -j$(nproc) && \
+# 	make install && ldconfig && \
+# 	cd .. && rm -Rf p4c/
