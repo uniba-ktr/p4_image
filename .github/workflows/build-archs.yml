@@ -51,9 +51,7 @@ jobs:
       with:
         context: .
         file: p4.dockerfile
-        platforms: linux/amd64,linux/arm/v7,linux/arm64
-        build-args: |
-          image=unibaktr/alpine
+        platforms: linux/amd64,linux/arm64
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
@@ -96,7 +94,7 @@ jobs:
       with:
         context: .
         file: grpc.dockerfile
-        platforms: linux/amd64,linux/arm/v7,linux/arm64
+        platforms: linux/amd64,linux/arm64
         build-args: |
           image=${{ env.REGISTRY }}/${{ env.REPO }}/p4:${{ env.BRANCH_NAME }}
         push: true
@@ -141,7 +139,7 @@ jobs:
       with:
         context: .
         file: grpc.dockerfile
-        platforms: linux/amd64,linux/arm/v7,linux/arm64
+        platforms: linux/amd64,linux/arm64
         build-args: |
           image=${{ env.REGISTRY }}/${{ env.REPO }}/grpc:${{ env.BRANCH_NAME }}
         push: true
