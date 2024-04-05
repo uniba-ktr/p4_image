@@ -1,0 +1,132 @@
+name: GHCR Build
+
+env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  REGISTRY: ghcr.io
+
+on:
+  push:
+    branches:
+      - '**'
+      - '!main'
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  p4c_image:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set time
+      run: echo "BUILD_DATE=$(date +%s)" >> $GITHUB_ENV
+    - name: downcase REPO
+      run: echo "REPO=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
+    - name: Checkout
+      uses: actions/checkout@v3.4.0
+    # https://github.com/docker/setup-qemu-action
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2.1.0
+    # https://github.com/docker/setup-buildx-action
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v2.5.0
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v4.3.0
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.REPO }}/p4
+        flavor: |
+          latest=true
+        tags: |
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=ref,event=branch
+    - name: Build and push
+      uses: docker/build-push-action@v4.0.0
+      with:
+        context: .
+        file: p4.dockerfile
+        platforms: linux/amd64,linux/arm/v7,linux/arm64
+        build-args: |
+          image=unibaktr/alpine
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+  grpc_image:
+    needs: p4c_image
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set time
+      run: echo "BUILD_DATE=$(date +%s)" >> $GITHUB_ENV
+    - name: downcase REPO
+      run: echo "REPO=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
+    - name: Checkout
+      uses: actions/checkout@v3.4.0
+    # https://github.com/docker/setup-qemu-action
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2.1.0
+    # https://github.com/docker/setup-buildx-action
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v2.5.0
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v4.3.0
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.REPO }}/grpc
+        flavor: |
+          latest=true
+        tags: |
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=ref,event=branch
+    - name: Build and push
+      uses: docker/build-push-action@v4.0.0
+      with:
+        context: .
+        file: grpc.dockerfile
+        platforms: linux/amd64,linux/arm/v7,linux/arm64
+        build-args: |
+          image=${{ env.REGISTRY }}/${{ env.REPO }}/p4:${{ env.BRANCH_NAME }}
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+  bmv_image:
+    needs: grpc_image
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set time
+      run: echo "BUILD_DATE=$(date +%s)" >> $GITHUB_ENV
+    - name: downcase REPO
+      run: echo "REPO=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
+    - name: Checkout
+      uses: actions/checkout@v3.4.0
+    # https://github.com/docker/setup-qemu-action
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2.1.0
+    # https://github.com/docker/setup-buildx-action
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v2.5.0
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v4.3.0
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.REPO }}/bmv
+        flavor: |
+          latest=true
+        tags: |
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=ref,event=branch
+    - name: Build and push
+      uses: docker/build-push-action@v4.0.0
+      with:
+        context: .
+        file: grpc.dockerfile
+        platforms: linux/amd64,linux/arm/v7,linux/arm64
+        build-args: |
+          image=${{ env.REGISTRY }}/${{ env.REPO }}/grpc:${{ env.BRANCH_NAME }}
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+    

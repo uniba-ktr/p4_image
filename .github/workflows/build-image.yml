@@ -9,6 +9,7 @@ on:
     branches:
       - '**'
       - '!main'
+      - '!multi_arch'
   pull_request:
     branches:
       - 'main'
@@ -67,7 +68,7 @@ jobs:
      - name: tar image
        run: |
              docker image ls -a
-             docker save --output /tmp/grpc.tar ${{ env.REGISTRY }}/grpc:${{ env.BRANCH_NAME }}             
+             docker save --output /tmp/grpc.tar ${{ env.REGISTRY }}/grpc:${{ env.BRANCH_NAME }}
      - name: Upload artifact
        uses: actions/upload-artifact@v3
        with:
